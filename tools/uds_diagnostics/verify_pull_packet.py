@@ -119,6 +119,7 @@ int main(int argc, char**) {
         uds.PullPacket(ctx);
         const bool ok = ctx.response.size() == 3 && ctx.response[0] == 0 &&
                         ctx.response[1] == u32(size) && ctx.buffer.size() == size &&
+                        (expect_bug || size != 0 || ctx.response[2] == 0) &&
                         std::all_of(ctx.buffer.begin(), ctx.buffer.end(),
                                     [](u8 b) { return b == 0xA5; });
         if (!ok) {

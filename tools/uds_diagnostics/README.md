@@ -48,6 +48,7 @@ IPC の読み書きと HLE 戻り値はテスト用スタブであり、ゲー�
 
 - `diagnostics-only`: ベースの通信処理に診断ログを追加。誤判定も元のまま。
 - `pull-result-fix`: 同じ診断ログに、成功時に error() を読まない修正を適用。
+  空の受信で送信元IDが未初期化値にならないよう、返却ヘッダーもゼロ初期化する。
 
 起動後の初期化ログの `UDS_DIAG version=1 ... build=...` で区別する。
 タイムアウト、エラーの戻り値、再送、シーケンス番号、UDS の接続状態の仕様は変更しない。
@@ -92,6 +93,8 @@ Clang 23 / libc++ で必要になった Dynarmic の明示的な `<vector>` incl
 この include 追加は JIT や UDS の動作を変えない。
 同様に `src/network/artic_base/artic_base_client.h` に `<vector>`、
 `externals/httplib/httplib.h` に `<exception>` を明示的に追加している。
+Qt が取り込むコーデックとプラグインの依存 DLL も、PE import を再帰的に走査して同梱する。
+これは配布物の起動に必要な処理で、UDS の通信を変更しない。
 
 回帰テストは Python 3 と clang++ を使う:
 

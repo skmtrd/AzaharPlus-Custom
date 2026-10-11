@@ -822,7 +822,7 @@ ResultVal<std::shared_ptr<Kernel::Event>> NWM_UDS::Initialize(
         node_info.clear();
         node_info.push_back(current_node);
         channel_data.clear();
-        LOG_INFO(Service_NWM, "UDS_DIAG version=1 base=cf9068844 build=diagnostics-only");
+        LOG_INFO(Service_NWM, "UDS_DIAG version=1 base=cf9068844 build=pull-result-fix");
         LogConnectionState("initialize");
     }
 
@@ -1390,17 +1390,17 @@ void NWM_UDS::PullPacket(Kernel::HLERequestContext& ctx) {
     u32 max_out_buff_size = rp.Pop<u32>();
     std::vector<u8> output_buffer;
 
-    SecureDataHeader secure_data;
+    SecureDataHeader secure_data{};
 
     auto ret = PullPacketHLE(bind_node_id, max_out_buff_size, max_out_buff_size_aligned,
                              output_buffer, &secure_data);
-    // Log the discriminant before the legacy IPC switch reads the error union member.
+    // Successful results contain a byte count; only failed results contain an error.
     if (!ret || *ret != 0) {
         LOG_DEBUG(Service_NWM, "UDS_DIAG PullPacket-ipc bind={} has_value={} value_or_error={}",
                   bind_node_id, ret.has_value(), ret ? *ret : static_cast<int>(ret.error()));
     }
 
-    switch (ret.error()) {
+    switch (ret ? ResultStatus::ResultSuccess : ret.error()) {
     case ResultStatus::RecvError_NotConnected: {
         LOG_DEBUG(Service_NWM, "UDS_DIAG PullPacket-ipc reply=not-connected has_value={}",
                   ret.has_value());

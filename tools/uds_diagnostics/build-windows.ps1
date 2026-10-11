@@ -34,4 +34,5 @@ if (!$SkipConfigure) {
 if ($LASTEXITCODE) { throw "Compilation failed ($LASTEXITCODE)" }
 & $taskCmake --build $taskBuild --target bundle
 if ($LASTEXITCODE) { throw "Bundling failed ($LASTEXITCODE)" }
+& (Join-Path $PSScriptRoot 'complete-dll-dependencies.ps1') -Bundle "$taskBuild/bundle" -MsysRoot $taskMsys
 Write-Output "Windows bundle: $taskBuild/bundle"
