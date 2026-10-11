@@ -1,0 +1,13 @@
+diff --git a/src/dynarmic/ir/ir_emitter.h b/src/dynarmic/ir/ir_emitter.h
+index d37df245..227b2e92 100644
+--- a/src/dynarmic/ir/ir_emitter.h
++++ b/src/dynarmic/ir/ir_emitter.h
+@@ -5,6 +5,8 @@
+ 
+ #pragma once
+ 
++#include <vector>
++
+ #include <mcl/stdint.hpp>
+ 
+ #include "dynarmic/ir/acc_type.h"

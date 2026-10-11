@@ -63,7 +63,8 @@ pacman -S --needed git make mingw-w64-clang-x86_64-toolchain \
   mingw-w64-clang-x86_64-cmake mingw-w64-clang-x86_64-ninja \
   mingw-w64-clang-x86_64-spirv-tools mingw-w64-clang-x86_64-qt6-base \
   mingw-w64-clang-x86_64-qt6-multimedia mingw-w64-clang-x86_64-qt6-multimedia-wmf \
-  mingw-w64-clang-x86_64-qt6-tools mingw-w64-clang-x86_64-qt6-translations
+  mingw-w64-clang-x86_64-qt6-tools mingw-w64-clang-x86_64-qt6-translations \
+  mingw-w64-clang-x86_64-openssl
 ```
 
 PowerShell でリポジトリーのルートから実行する:
@@ -78,6 +79,10 @@ git submodule update --init --recursive
 FFmpeg の録画機能は OFF、LTO は OFF、既存の全体テストターゲットは OFF。
 新しいコンパイラーの既存警告がビルドを止めないよう warnings-as-errors は OFF。
 これらは通信プロトコルを変更しない。日本語訳を含めてビルドする。
+CLANG64 の OpenSSL を上流の `USE_SYSTEM_OPENSSL=ON` で使う。
+Clang 23 / libc++ で必要になった Dynarmic の明示的な `<vector>` include は、
+`dynarmic-clang23.patch` として分離し、スクリプトが必要な場合に一度だけ適用する。
+この include 追加は JIT や UDS の動作を変えない。
 
 回帰テストは Python 3 と clang++ を使う:
 
