@@ -67,7 +67,7 @@ pacman -S --needed git make mingw-w64-clang-x86_64-toolchain \
   mingw-w64-clang-x86_64-openssl
 ```
 
-PowerShell でリポジトリーのルートから実行する:
+PowerShell 7 でリポジトリーのルートから実行する:
 
 ```powershell
 git submodule update --init --recursive
@@ -76,6 +76,11 @@ git submodule update --init --recursive
 
 既定の MSYS2 パスは、この作業で用意した `../tools/msys64`。
 出力は `build-uds/bundle`。配布するときは exe 単体でなく bundle 全体をコピーする。
+同梱 ZIP の `source/nwm-uds.patch` はベースからの UDS とヘッダー補完の差分。
+別環境でソースを復元する場合は、上流を clone して `git checkout cf9068844`、
+`git submodule update --init --recursive` を実行し、この差分を `git apply` する。
+さらに ZIP の `source/tools/uds_diagnostics` をソースツリーの同じ位置へコピーする。
+`manifest.json` にビルド種別、ソースの SHA256、配布ファイル一覧と SHA256 を保存する。
 FFmpeg の録画機能は OFF、LTO は OFF、既存の全体テストターゲットは OFF。
 新しいコンパイラーの既存警告がビルドを止めないよう warnings-as-errors は OFF。
 これらは通信プロトコルを変更しない。日本語訳を含めてビルドする。
@@ -83,6 +88,8 @@ CLANG64 の OpenSSL を上流の `USE_SYSTEM_OPENSSL=ON` で使う。
 Clang 23 / libc++ で必要になった Dynarmic の明示的な `<vector>` include は、
 `dynarmic-clang23.patch` として分離し、スクリプトが必要な場合に一度だけ適用する。
 この include 追加は JIT や UDS の動作を変えない。
+同様に `src/network/artic_base/artic_base_client.h` に `<vector>`、
+`externals/httplib/httplib.h` に `<exception>` を明示的に追加している。
 
 回帰テストは Python 3 と clang++ を使う:
 
@@ -150,6 +157,8 @@ clang++ が PATH にない場合は `--compiler C:/msys64/clang64/bin/clang++.ex
 FNV-1a の補助情報であり一意なIDではない。ノードID、チャンネル、長さ、順序も照合する。
 元実装の sequence_number=0 は変更していない。
 空の Pull は最初の8回と2の累乗回で記録し、総数は state の empty に残す。
+元のロガーには 100 MiB の出力上限があるため、一試験ごとにログを保存する。
+上限やゲームのタイムアウトは変更していない。
 
 ペアのログを JSON に要約する:
 
