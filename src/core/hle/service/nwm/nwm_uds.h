@@ -589,6 +589,17 @@ private:
     // Connection status of this 3DS.
     ConnectionStatus connection_status{};
 
+    // Diagnostic counters only; they do not affect protocol state or save states.
+    struct DiagnosticCounters {
+        u64 tx{};
+        u64 rx{};
+        u64 queued{};
+        u64 pulled{};
+        u64 empty_pulls{};
+        u64 dropped{};
+    } diagnostics;
+    void LogConnectionState(const char* operation);
+
     std::atomic<bool> initialized{false};
 
     /* Node information about the current network.
