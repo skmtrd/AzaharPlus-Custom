@@ -23,7 +23,8 @@ $taskSource = Join-Path $taskPackage 'source'
 $taskSourceHelpers = Join-Path $taskSource 'tools/uds_diagnostics'
 New-Item -ItemType Directory -Path $taskSourceHelpers -Force | Out-Null
 foreach ($taskHelper in @('dynarmic-clang23.patch', 'build-windows.ps1', 'verify_pull_packet.py',
-                          'package-windows.ps1', 'capture-logs.ps1', 'analyze-logs.py', 'README.md')) {
+                          'package-windows.ps1', 'capture-logs.ps1', 'analyze-logs.py',
+                          'verify-bundle.py', 'README.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $taskHelper) -Destination $taskSourceHelpers
 }
 Copy-Item -LiteralPath (Join-Path $taskRepo 'license.txt') -Destination $taskPackage

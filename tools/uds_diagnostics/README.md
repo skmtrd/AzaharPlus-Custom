@@ -33,6 +33,8 @@
 `Expected` の値とエラーは union を共有するため、成功値をエラーとして読み、
 9/10/11 バイトの受信を `RecvError_NotConnected` / `RecvError_BadNode` /
 `RecvError_PacketSizeTooLarge` として処理する。C++ 上も非アクティブな union の読み取りになる。
+HLE はその前に受信キューからパケットを取り出しているため、IPC で誤エラーが返ると、
+そのパケットを次の Pull で再取得することもできない。
 
 実際の `PullPacket` 関数本体、`Expected` 実装、`ResultStatus` enum を使う
 `verify_pull_packet.py` で、正常長 0〜1478 と実エラー3種類を調べる。
@@ -140,6 +142,7 @@ clang++ が PATH にない場合は `--compiler C:/msys64/clang64/bin/clang++.ex
   reason 0=なし、1=接続成立、4=接続喪失。
 - `GetConnectionStatus-return-before-clear`: ゲームへ返すスナップショット。
   changed_nodes をクリアする前に記録する。
+- state のカウンターは Initialize からの累計。再参加試行の前後も追跡できる。
 - `node` / `bind`: MAC とノードIDの対応、チャンネル、受信元フィルター、キュー深さ。
 - `tx`: 宛先、長さ、flags と fingerprint。hle-success はルーム/相手への到達確認ではない。
 - `transport result=enqueued`: ルーム送信キューに投入。到達確認ではない。
