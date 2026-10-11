@@ -4,6 +4,46 @@
 `cf9068844820f819a6eabbeeeb6a70d546e3e85a`。
 取得元: <https://github.com/AzaharPlus/AzaharPlus>。
 
+**調査状況: 診断用 Windows ビルドと候補修正版を作成。F1 のロビー合流・レース完走は未検証。**
+この環境から2台目のPCを操作できず、両PCで今回のビルドを実行したログもまだないため、
+最終目標の達成とは報告しない。下記の実施済み試験と、2台で必要な試験を区別する。
+
+## 実施済みの検証
+
+| 対象 | 試験 | 結果 |
+| --- | --- | --- |
+| 元コード cf9068844 | 実際の PullPacket 本体、正常長1479種類、最適化 O0/O2 | 9/10/11 バイトだけを誤エラーとして再現 |
+| 診断版 | 同じ回帰テスト、O2 | 元コードと同じ誤判定を維持 |
+| 候補修正版 | 同じ回帰テスト、O0/O2 | 正常長1479種類すべて成功、実エラー3種類も維持。空受信の送信元IDは0 |
+| Windows x64 | 本体とルームサーバーの Release ビルド | 両ビルド成功 |
+| 配布物 | ファイル SHA256、全 exe/DLL の PE import、Qt Windows plugin | 各139ファイルのハッシュ、123個のPEファイルを検査し、不足DLLなし |
+| 配布物 | 開発ツールの PATH を外した隔離 user 環境で起動 | 両ビルドが CLI の引数判定まで到達 |
+| F1 2011 | 2台で合流・開始・完走 | 未実施。双方の追加ログが必要 |
+
+CLI 起動確認は `azahar.exe -o unused` で、処理を実行しない引数組み合わせに対する
+`Invalid option combination provided. Quitting.` と終了コード1を確認したもの。
+ゲーム起動、描画、2台間の通信を検証した試験ではない。
+既存の全体テストスイートは実行していない。
+実行ログと既存ログの退避先は、作業ルートの `evidence/`。
+
+診断版の UDS ソースはローカルコミット `9a81940cb`、候補修正は `47fc1c0c3`。
+ブランチは `codex/f1-2011-uds-diagnostics`。GitHub へは公開していない。
+
+## 変更したファイル
+
+| ファイル | 内容 |
+| --- | --- |
+| `src/core/hle/service/nwm/nwm_uds.cpp` | 指定6関数、Bind/Unbind、EAPoL、ノード表、イベント、ルーム送信の診断ログ。候補版では PullPacket の成功結果判定と返却ヘッダー初期化を修正 |
+| `src/core/hle/service/nwm/nwm_uds.h` | 診断用カウンターと状態ログ関数。プロトコル構造体・シリアライズ形式は変更しない |
+| `src/network/artic_base/artic_base_client.h` | ビルド互換性: `<vector>` を明示 |
+| `externals/httplib/httplib.h` | ビルド互換性: `<exception>` を明示 |
+| `externals/dynarmic/src/dynarmic/ir/ir_emitter.h` | ビルド互換性: `<vector>` を明示。サブモジュールの参照コミットは維持し、再適用可能なパッチとして同梱 |
+| `tools/uds_diagnostics/` | ビルド、DLL補完、パッケージ、回帰テスト、配布物検査、ログ保存・解析、手順書 |
+
+Dynarmic は上記 include のため Git status 上は modified と表示される。
+元のコードは `src/core/hle/service/nwm/nwm_uds.cpp` のみで受信誤判定を修正でき、
+ビルド互換性の補完はその修正と別の目的である。
+
 ## 既存ログで確認できたこと
 
 このPCのログと Downloads の保存ログを、作業フォルダーの `evidence/` に退避した。
