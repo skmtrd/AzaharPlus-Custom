@@ -1,5 +1,7 @@
 ## AzaharPlus Custom
 
+[最新Release（Windows x64）](https://github.com/skmtrd/AzaharPlus-Custom/releases/latest) · [更新履歴](CHANGELOG.md)
+
 [このカスタム版の説明・ビルド手順（日本語）](README-custom-ja.md)
 
 ---
