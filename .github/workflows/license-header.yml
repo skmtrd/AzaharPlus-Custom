@@ -1,8 +1,7 @@
 name: citra-license
 
 on:
-  pull_request:
-    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   license-header:

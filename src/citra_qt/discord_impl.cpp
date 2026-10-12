@@ -5,6 +5,7 @@
 #include <chrono>
 #include <string>
 #include <discord_rpc.h>
+#include "citra_qt/discord_artwork.h"
 #include "citra_qt/discord_impl.h"
 #include "citra_qt/uisettings.h"
 #include "common/common_types.h"
@@ -16,8 +17,7 @@ namespace DiscordRPC {
 DiscordImpl::DiscordImpl(const Core::System& system_) : system{system_} {
     DiscordEventHandlers handlers{};
 
-    // The number is the client ID for Citra, it's used for images and the
-    // application name
+    // Azahar's client ID supplies the images and default application name.
     Discord_Initialize("1345366770436800533", &handlers, 1, nullptr);
 }
 
@@ -38,20 +38,34 @@ void DiscordImpl::Update(bool is_powered_on) {
         if (str.length() <= maxLen) {
             return str;
         }
-        return str.substr(0, maxLen - 3) + "...";
+        std::size_t end = maxLen - 3;
+        while (end > 0 && (static_cast<unsigned char>(str[end]) & 0xC0) == 0x80) {
+            --end;
+        }
+        return str.substr(0, end) + "...";
     };
 
     std::string title;
+    std::string artwork;
     if (is_powered_on) {
         system.GetAppLoader().ReadTitle(title);
-        title = truncate("Playing: " + title);
+        u64 program_id{};
+        if (system.GetAppLoader().ReadProgramId(program_id) == Loader::ResultStatus::Success) {
+            artwork = GetGameArtworkUrl(program_id);
+        }
     }
+    // Discord adds the localized "Playing" label itself. Use the game title for
+    // both the profile card heading and the compact member-list status.
+    title = truncate(title.empty() ? "AzaharPlus" : title);
 
     DiscordRichPresence presence{};
-    presence.largeImageKey = "logo";
-    presence.largeImageText = "An open source emulator for the Nintendo 3DS";
+    presence.name = title.c_str();
+    presence.statusDisplayType = 0;
+    presence.largeImageKey = artwork.empty() ? "logo" : artwork.c_str();
+    presence.largeImageText = is_powered_on ? title.c_str() :
+                                            "An open source emulator for the Nintendo 3DS";
     if (is_powered_on) {
-        presence.state = title.c_str();
+        presence.details = "Nintendo 3DS / AzaharPlus";
     }
     presence.startTimestamp = start_time;
     Discord_UpdatePresence(&presence);

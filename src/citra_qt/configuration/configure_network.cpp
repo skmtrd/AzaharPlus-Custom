@@ -31,7 +31,7 @@ void ConfigureWeb::SetConfiguration() {
         QString::fromStdString(Settings::values.web_api_url.GetValue()));
     ui->token_lineedit->setText(QString::fromStdString(Settings::values.network_token.GetValue()));
 
-#ifdef ENABLE_DISCORD_RPC
+#ifdef USE_DISCORD_PRESENCE
     ui->toggle_discordrpc->setChecked(UISettings::values.enable_discord_presence.GetValue());
 #endif
 }

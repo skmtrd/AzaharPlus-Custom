@@ -1,0 +1,32 @@
+対応ソースの再ビルド
+
+このソースには、プロジェクトとサブモジュールの実ファイルを含めています。
+Gitの初期化やサブモジュールの再取得は必要ありません。
+SOURCE.jsonにベースコミット、各サブモジュールのコミット、追加修正のハッシュを記載しています。
+
+必要な環境
+PowerShell 7、MSYS2 CLANG64、Python 3、Git
+MSYS2の依存パッケージ一覧は tools/uds_diagnostics/README.md のWindowsビルド節を参照。
+Discord RPC用RapidJSON 1.1.0の対応ソースも含めています。
+
+PowerShell 7でソースのルートフォルダーから実行します。
+
+./tools/uds_diagnostics/build-windows.ps1 -MsysRoot C:/msys64 -Jobs 6
+
+出力: build-uds/bundle
+スクリプトで USE_DISCORD_PRESENCE=ON を指定しています。
+Discordの設定読み込み、保存、実装の条件名は USE_DISCORD_PRESENCE で統一しています。
+Discord RPCのnameとstatus_display_typeを送信できるよう、同梱ライブラリーも修正しています。
+プロフィールのカード上部とメンバー一覧には、プレイ中のゲーム名を送ります。
+画像対応表はmisc/discord-artwork-index.jsonから作成したヘッダーに含まれています。
+再生成: python tools/discord_release/generate-artwork.py
+再ビルドの際に外部の画像データベースを取得する必要はありません。
+FFmpeg録画、LTO、既存の全体テストターゲットは無効です。
+日本語訳とWindows用Qtプラグインを含めてビルドします。
+配布時はbundle内の全ファイルが必要です。
+
+通信部分の既存回帰チェック
+python tools/uds_diagnostics/verify_pull_packet.py --compiler C:/msys64/clang64/bin/clang++.exe
+
+このチェックはPullPacketの正常受信長とエラー処理の検証です。
+ゲーム実行や2台間の通信試験を代替するものではありません。

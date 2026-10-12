@@ -1,0 +1,15 @@
+Game artwork lookup attribution
+
+Public title-ID index derived from 3DS-dB by ghost-land:
+https://github.com/ghost-land/3dsdb
+Revision: 0c316afaf29c4d01ca88c488b1b6cb6920e9f58e
+License: GNU GPL version 3; see 3dsdb-gpl3.txt.
+The index contains 4138 verified icon paths in the base and virtual-console categories.
+
+Game artwork remains the property of its respective owners.
+The program references public image URLs; no game images or ROM contents are included.
+Discord retrieves those images from raw.githubusercontent.com when presence is shared.
+Unlisted titles use the existing Azahar logo.
+
+The source index is misc/discord-artwork-index.json.
+Regenerate the lookup with tools/discord_release/generate-artwork.py.

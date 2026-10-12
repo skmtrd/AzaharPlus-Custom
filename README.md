@@ -1,3 +1,9 @@
+## AzaharPlus Custom
+
+[このカスタム版の説明・ビルド手順（日本語）](README-custom-ja.md)
+
+---
+
 <b>AzaharPlus</b> is a fork of the Azahar 3DS emulator with extra features.
 
 Each version is the same as the corresponding version of Azahar exept for this:

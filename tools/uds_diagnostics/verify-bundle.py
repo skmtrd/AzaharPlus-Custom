@@ -18,7 +18,7 @@ for entry in manifest['files']:
     file = bundle / entry['path']
     if not file.is_file() or hashlib.sha256(file.read_bytes()).hexdigest().upper() != entry['sha256']:
         failures.append(f"hash mismatch: {entry['path']}")
-marker = f"UDS_DIAG version=1 base=cf9068844 build={manifest['kind']}".encode()
+marker = f"UDS_DIAG version=1 base=cf9068844 build={manifest.get('uds_kind', manifest['kind'])}".encode()
 if marker not in (bundle / 'azahar.exe').read_bytes():
     failures.append('diagnostic build marker missing or wrong')
 if not (bundle / 'plugins/platforms/qwindows.dll').is_file():
